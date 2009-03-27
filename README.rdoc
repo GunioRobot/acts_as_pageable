@@ -1,0 +1,7 @@
+= acts_as_pageable
+
+Description goes here.
+
+== Copyright
+
+Copyright (c) 2009 Rocha & Paulo Ahagon. See LICENSE for details.
