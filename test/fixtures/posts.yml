@@ -1,0 +1,35 @@
+paulo_blog_post_a:
+  id: 1
+  title: a
+  text: mimimi
+  author_id: 1
+  blog_id: 1
+
+paulo_blog_post_b:
+  id: 2 
+  title: b
+  text: mimimi
+  author_id: 1
+  blog_id: 1
+
+paulo_blog_post_c:
+  id: 3 
+  title: c 
+  text: mimimi
+  author_id: 1
+  blog_id: 1
+
+ahagon_blog_post_a:
+  id: 4 
+  title: a
+  text: mimimi
+  author_id: 2
+  blog_id: 2
+
+ahagon_blog_post_b:
+  id: 5 
+  title: b
+  text: mimimi
+  author_id: 2
+  blog_id: 2
+
