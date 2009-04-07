@@ -4,4 +4,4 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2009 Rocha & Paulo Ahagon. See LICENSE for details.
+Copyright (c) 2009 Paulo Ahagon. See LICENSE for details.
