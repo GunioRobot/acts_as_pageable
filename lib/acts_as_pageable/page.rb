@@ -1,6 +1,6 @@
 module ActsAsPageable
 
-  class Page
+  module Page
 
     attr_reader :total_items, :total_pages, :items
     attr_reader :next, :previous, :all_previous, :all_next
@@ -10,41 +10,90 @@ module ActsAsPageable
     attr_accessor :min_window_offset, :max_window_offset
 
     def items_per_page
-      @items_per_page = self.min_items_per_page if @items_per_page.nil? ||
-        !@items_per_page.between?(self.min_items_per_page, self.max_items_per_page)
+      @items_per_page = fetch(:items_per_page, self.min_items_per_page)
+      unless @items_per_page.between?(self.min_items_per_page, self.max_items_per_page)
+        @items_per_page = store(:items_per_page,self.min_items_per_page)
+      end
       @items_per_page
     end
 
+    def items_per_page=(value)
+      store(:items_per_page,value)
+    end
+
     def window_offset
-      @window_offset = self.min_window_offset if @window_offset.nil? ||
-        !@window_offset.between?(self.min_window_offset, self.max_window_offset)
+      @window_offset = fetch(:window_offset,self.min_window_offset)
+      unless @window_offset.between?(self.min_window_offset, self.max_window_offset)
+        @window_offset = store(:window_offset,self.min_window_offset)
+      end
       @window_offset
     end
 
+    def window_offset=(value)
+      store(:window_offset,value)
+    end
+
     def number
-      @number = 1 if @number.nil? || @number < 1 
-      @number = self.total_pages if @number > self.total_pages
+      @number = fetch(:number,1)
+      if @number < 1 
+        @number = store(:number,1) 
+      end
+      if @number > self.total_pages
+        @number = store(:number,self.total_pages)
+      end
       @number
     end
 
+    def number=(value)
+      store(:number,value)
+    end
+
     def max_items_per_page
-      @max_items_per_page = 5 if @max_items_per_page.nil?
+      @max_items_per_page = fetch(:max_items_per_page,5)
+      unless @max_items_per_page.between?(5,200)
+        @max_items_per_page = store(:max_items_per_page,5)
+      end
       @max_items_per_page
     end
 
+    def max_items_per_page=(value)
+      store(:max_items_per_page,value)
+    end
+
     def min_items_per_page
-      @min_items_per_page = 3 if @min_items_per_page.nil?
+      @min_items_per_page = fetch(:min_items_per_page,3)
+      unless @min_items_per_page.between?(3,200)
+        @min_items_per_page = store(:min_items_per_page,3)
+      end
       @min_items_per_page
     end
 
+    def min_items_per_page=(value)
+      store(:min_items_per_page,value)
+    end
+
     def min_window_offset
-      @min_window_offset = 2 if @min_window_offset.nil?
+      @min_window_offset = fetch(:min_window_offset,2)
+      unless @min_window_offset.between?(2,200)
+        @min_window_offset = store(:min_window_offset,2)
+      end
       @min_window_offset
     end
 
+    def min_window_offset=(value)
+      store(:min_window_offset,value)
+    end
+
     def max_window_offset
-      @max_window_offset = 3 if @max_window_offset.nil?
+      @max_window_offset = fetch(:max_window_offset,3)
+      unless @max_window_offset.between?(3,200)
+        @max_window_offset = store(:max_window_offset,3)
+      end
       @max_window_offset
+    end
+
+    def max_window_offset=(value)
+      store(:max_window_offset,value)
     end
 
     def total_pages
@@ -83,21 +132,24 @@ module ActsAsPageable
       @all_next = (range_start..range_end).to_a
     end
 
-    def initialize(args={})
-      [:items_per_page=, :window_offset=, :number=,:max_items_per_page=, 
-       :min_items_per_page=, :min_window_offset=, :max_window_offset=].each do |accessor|
-         self.send(accessor, *args[accessor]) unless args[accessor].nil?
-       end
-      @total_items = args[:total_items].call(args)
-      if @total_items < 1
+    def total_items
+      return @total_items unless @total_items.nil?
+      total_items_proc = fetch(:total_items)
+      @total_items = total_items_proc.call(self)
+    end
+
+    def items
+      if self.total_items < 1
         @items = []
       else
         offset = (self.number * self.items_per_page) - self.items_per_page 
         limit = self.items_per_page
-        @items = args[:items].call(offset,limit,args)
+        items_proc = fetch(:items)
+        @items = items_proc.call(offset,limit,self)
       end
+      @items
     end
-
+    
   end
 
 end

@@ -49,7 +49,7 @@ module ActsAsPageable
       end
       pag[:total_items] = proc_count
 
-      Page.new pag
+      pag.extend Page
     end
 
   end
