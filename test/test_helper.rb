@@ -3,16 +3,23 @@ require 'test/unit'
 require 'shoulda'
 
 TEST_ROOT       = File.expand_path(File.dirname(__FILE__))
-FIXTURES_ROOT   = TEST_ROOT + "/fixtures"
+LIB_ROOT        = File.join(File.dirname(__FILE__), '..', 'lib')
+MODELS_ROOT     = File.join(TEST_ROOT,"models") 
+FIXTURES_ROOT   = File.join(TEST_ROOT,"fixtures")
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(LIB_ROOT)
+$LOAD_PATH.unshift(MODELS_ROOT)
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
 require 'logger'
 require 'active_record'
 require 'active_record/fixtures'
 require 'active_record/test_case'
-require 'acts_as_pageable'
+
+require File.join(LIB_ROOT, 'acts_as_pageable')
+require File.join(MODELS_ROOT,'author')
+require File.join(MODELS_ROOT,'blog')
+require File.join(MODELS_ROOT,'post')
 
 config = {
   'pageable_unit' => {
