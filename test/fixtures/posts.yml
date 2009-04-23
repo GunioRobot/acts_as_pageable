@@ -19,17 +19,31 @@ paulo_blog_post_c:
   author_id: 1
   blog_id: 1
 
-ahagon_blog_post_a:
+ahagon_blog_ruby_post_a:
   id: 4 
   title: a
   text: mimimi
   author_id: 2
   blog_id: 2
 
-ahagon_blog_post_b:
+ahagon_blog_ruby_post_b:
   id: 5 
   title: b
   text: mimimi
   author_id: 2
   blog_id: 2
+
+ahagon_blog_bike_post_a:
+  id: 6 
+  title: a
+  text: mimimi
+  author_id: 2
+  blog_id: 3 
+
+ahagon_blog_bike_post_b:
+  id: 7 
+  title: b
+  text: mimimi
+  author_id: 2
+  blog_id: 3
 
