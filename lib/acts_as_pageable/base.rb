@@ -28,7 +28,7 @@ module ActsAsPageable
           proc_find = lambda do |offset,limit,opts|
             pag[:find][:offset] = offset
             pag[:find][:limit] = limit
-            all pag[:find]
+            find pag[:find]
           end
         when "Proc"
           proc_find = pag[:find]
