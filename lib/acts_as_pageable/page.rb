@@ -3,7 +3,7 @@ module ActsAsPageable
   module Page
 
     attr_reader :total_items, :total_pages, :items
-    attr_reader :next, :previous, :all_previous, :all_next
+    attr_reader :next, :previous, :left_neighbors, :right_neighbors
     
     attr_accessor :items_per_page, :window_offset, :number
     attr_accessor :max_items_per_page, :min_items_per_page
@@ -34,18 +34,14 @@ module ActsAsPageable
     end
 
     def number
-      @number = fetch(:number,1)
-      if @number < 1 
-        @number = store(:number,1) 
-      end
-      if @number > self.total_pages
-        @number = store(:number,self.total_pages)
-      end
+      @number = fetch(:page,1)
+      @number = store(:page,1) if @number < 1 
+      @number = store(:page,self.total_pages) if @number > self.total_pages
       @number
     end
 
     def number=(value)
-      store(:number,value)
+      store(:page,value)
     end
 
     def max_items_per_page
@@ -98,8 +94,7 @@ module ActsAsPageable
 
     def total_pages
       return @total_pages unless @total_pages.nil?
-      @total_pages = (self.total_items.to_f / self.items_per_page.to_f).ceil 
-      @total_pages
+      @total_pages = store :total_items, (self.total_items.to_f / self.items_per_page.to_f).ceil 
     end
     
     def next
@@ -116,20 +111,22 @@ module ActsAsPageable
       @previous
     end
 
-    def all_previous
-      return @all_previous unless @all_previous.nil?
-      range_end = self.number - self.window_offset 
-      range_end = 1 if range_end < 1 
-      range_start = self.previous
-      @all_previous = (range_start..range_end).to_a
+    def left_neighbors
+      return @left_neighbors unless @left_neighbors.nil?
+      range_start = self.number - self.window_offset 
+      range_start = 1 if range_start < 1 
+      range_end = self.previous
+      return [] if range_start == range_end
+      @left_neighbors = (range_start..range_end).to_a
     end
 
-    def all_next
-      return @all_next unless @all_next.nil?
+    def right_neighbors
+      return @right_neighbors unless @right_neighbors.nil?
+      range_start = self.next
       range_end = self.number + self.window_offset
       range_end = self.total_pages if range_end > self.total_pages
-      range_start = self.next
-      @all_next = (range_start..range_end).to_a
+      return [] if range_start == range_end
+      @right_neighbors = (range_start..range_end).to_a
     end
 
     def total_items

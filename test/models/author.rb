@@ -1,4 +1,4 @@
 class Author < ActiveRecord::Base
-  has_many :blogs
-  has_many :posts, :through => :blogs
+  has_many :posts
+  has_many :blogs, :through => :posts, :uniq => true
 end
