@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rake'
-require 'active_record'
 
 begin
   require 'jeweler'
