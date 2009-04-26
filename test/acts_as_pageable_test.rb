@@ -1,111 +1,100 @@
 require File.join(File.dirname(__FILE__), 'test_helper')
 
 class ActsAsPageableTest < ActiveRecord::TestCase
-  fixtures :authors, :blogs, :posts
-  context "with default configuration" do
-    context ",when request to page one of all Post," do
-      setup do @page_one = Post.paginate! end
-      should "return 7 for total items"   do assert_equal 7, @page_one.total_items end 
-      should "return 3 for total pages"   do assert_equal 3, @page_one.total_pages end
-      should "return 2 for next page"     do assert_equal 2, @page_one.next end
-      should "return 1 for previous page" do assert_equal 1, @page_one.previous end
-      should "return [2,3] for array of next pages numbers"   do assert_equal [2,3], @page_one.right_neighbors end
-      should "return [] for array fo previous pages numbers" do assert_equal [], @page_one.left_neighbors end 
-      should "return 3 for items per page" do assert_equal 3, @page_one.items_per_page end
-      should "return 2 for window offset"  do assert_equal 2, @page_one.window_offset end
-      should "return 1 for current page"   do assert_equal 1, @page_one.number end
-    end
-    context ",when request to page two of all Post," do
-      setup do @page_two = Post.paginate! :page => 2 end 
-      should "return 5 for total items"   do assert_equal 7, @page_two.total_items end 
-      should "return 3 for total pages"   do assert_equal 3, @page_two.total_pages end 
-      should "return 3 for next page"     do assert_equal 3, @page_two.next end
-      should "return 1 for previous page" do assert_equal 1, @page_two.previous end 
-      should "return [] for array of next pages numbers"     do assert_equal [], @page_two.right_neighbors end
-      should "return [] for array fo previous pages numbers" do assert_equal [], @page_two.left_neighbors end
-      should "return 3 for items per page" do assert_equal 3, @page_two.items_per_page end
-      should "return 2 for window offset"  do assert_equal 2, @page_two.window_offset end
-      should "return 2 for current page"   do assert_equal 2, @page_two.number end
-    end 
-    context ",when request to page tree of all Post," do
-      setup do @page_tree = Post.paginate! :page => 3 end 
-      should "return 5 for total items"   do assert_equal 7, @page_tree.total_items end 
-      should "return 3 for total pages"   do assert_equal 3, @page_tree.total_pages end 
-      should "return 3 for next page"     do assert_equal 3, @page_tree.next end
-      should "return 2 for previous page" do assert_equal 2, @page_tree.previous end 
-      should "return [] for array of next pages numbers"     do assert_equal [], @page_tree.right_neighbors end
-      should "return [1,2] for array fo previous pages numbers" do assert_equal [1,2], @page_tree.left_neighbors end
-      should "return 3 for items per page" do assert_equal 3, @page_tree.items_per_page end
-      should "return 2 for window offset"  do assert_equal 2, @page_tree.window_offset end
-      should "return 3 for current page"   do assert_equal 3, @page_tree.number end
-    end
-    context ",when request inexist page number," do
-      context "4" do
-        setup do @page_tree = Post.paginate! :page => 4 end 
-        should "return 5 for total items"   do assert_equal 7, @page_tree.total_items end 
-        should "return 3 for total pages"   do assert_equal 3, @page_tree.total_pages end 
-        should "return 3 for next page"     do assert_equal 3, @page_tree.next end
-        should "return 2 for previous page" do assert_equal 2, @page_tree.previous end 
-        should "return [] for array of next pages numbers"     do assert_equal [], @page_tree.right_neighbors end
-        should "return [1,2] for array fo previous pages numbers" do assert_equal [1,2], @page_tree.left_neighbors end
-        should "return 3 for items per page" do assert_equal 3, @page_tree.items_per_page end
-        should "return 2 for window offset"  do assert_equal 2, @page_tree.window_offset end
-        should "return 3 for current page"   do assert_equal 3, @page_tree.number end
-      end
-      context "-1" do 
-        setup do @page_one = Post.paginate! :numer => -1 end
-        should "return 7 for total items"   do assert_equal 7, @page_one.total_items end 
-        should "return 3 for total pages"   do assert_equal 3, @page_one.total_pages end
-        should "return 2 for next page"     do assert_equal 2, @page_one.next end
-        should "return 1 for previous page" do assert_equal 1, @page_one.previous end
-        should "return [2,3] for array of next pages numbers"   do assert_equal [2,3], @page_one.right_neighbors end
-        should "return [] for array fo previous pages numbers" do assert_equal [], @page_one.left_neighbors end 
-        should "return 3 for items per page" do assert_equal 3, @page_one.items_per_page end
-        should "return 2 for window offset"  do assert_equal 2, @page_one.window_offset end
-        should "return 1 for current page"   do assert_equal 1, @page_one.number end
-      end
-      context "0" do 
-        setup do @page_one = Post.paginate! :page => 0 end
-        should "return 7 for total items"   do assert_equal 7, @page_one.total_items end 
-        should "return 3 for total pages"   do assert_equal 3, @page_one.total_pages end
-        should "return 2 for next page"     do assert_equal 2, @page_one.next end
-        should "return 1 for previous page" do assert_equal 1, @page_one.previous end
-        should "return [2,3] for array of next pages numbers"   do assert_equal [2,3], @page_one.right_neighbors end
-        should "return [] for array fo previous pages numbers" do assert_equal [], @page_one.left_neighbors end 
-        should "return 3 for items per page" do assert_equal 3, @page_one.items_per_page end
-        should "return 2 for window offset"  do assert_equal 2, @page_one.window_offset end
-        should "return 1 for current page"   do assert_equal 1, @page_one.number end
-      end
-    end
-    context ",when request to page one of Blogs," do 
-      setup do
-        paulo = Author.find 1
-        @page_one = paulo.blogs.paginate!
-      end
-      should "return 1 for total items"   do assert_equal 1, @page_one.total_items end
-      should "return 1 for total pages"   do assert_equal 1, @page_one.total_pages end
-      should "return 1 for next page"     do assert_equal 1, @page_one.next end
-      should "return 1 for previous page" do assert_equal 1, @page_one.previous end
-      should "return [] for array of next pages numbers"     do assert_equal [], @page_one.right_neighbors end
-      should "return [] for array fo previous pages numbers" do assert_equal [], @page_one.left_neighbors end
-      should "return 3 for items per page" do assert_equal 3, @page_one.items_per_page end 
-      should "return 2 for window offset"  do assert_equal 2, @page_one.window_offset end
-      should "return 1 for current page"   do assert_equal 1, @page_one.number end
-    end
-    context ",when request to page two of Blogs," do 
-      setup do
-        ahagon = Author.find 2 
-        @page_two = ahagon.blogs.paginate!
-      end
-      should "return 2 for total items"   do assert_equal 2, @page_two.total_items end
-      should "return 1 for total pages"   do assert_equal 1, @page_two.total_pages end
-      should "return 1 for next page"     do assert_equal 1, @page_two.next end
-      should "return 1 for previous page" do assert_equal 1, @page_two.previous end
-      should "return [] for array of next pages numbers"     do assert_equal [], @page_two.right_neighbors end
-      should "return [] for array fo previous pages numbers" do assert_equal [], @page_two.left_neighbors end
-      should "return 3 for items per page" do assert_equal 3, @page_two.items_per_page end 
-      should "return 2 for window offset"  do assert_equal 2, @page_two.window_offset end
-      should "return 1 for current page"   do assert_equal 1, @page_two.number end
-    end
+
+  fixtures :all
+
+  def test_default_paging_arguments
+    expected_page = {
+      :number => 1, 
+      :next => 2,
+      :previous => 1,
+      :total_items => 7, 
+      :total_pages => 7,
+      :left_neighbors => [1],
+      :right_neighbors => [2],
+      :items_per_page => 1,
+      :window_offset => 1,
+      :items => [Post.first]
+    }
+    assert_page expected_page,Post.paginate!
   end
+
+  def test_second_page
+    expected_page = {
+      :number => 2, 
+      :next => 3,
+      :previous => 1,
+      :total_items => 7, 
+      :total_pages => 7,
+      :left_neighbors => [1],
+      :right_neighbors => [3,4,5],
+      :items_per_page => 1,
+      :window_offset => 3,
+      :items => [Post.find(2)]
+    }
+    assert_page expected_page,Post.paginate!(:page => 2,:window_offset => 3)
+  end
+
+  def test_last_page
+    expected_page = {
+      :number => 3, 
+      :next => 3,
+      :previous => 2,
+      :total_items => 7, 
+      :total_pages => 3,
+      :left_neighbors => [2],
+      :right_neighbors => [3],
+      :items_per_page => 3,
+      :window_offset => 1,
+      :items => [Post.last]
+    }
+    assert_page expected_page,Post.paginate!(:page => 3,:items_per_page => 3)
+  end
+
+  def test_items_per_page
+    expected_page = {
+      :number => 1, 
+      :next => 2,
+      :previous => 1,
+      :total_items => 7, 
+      :total_pages => 2,
+      :left_neighbors => [1],
+      :right_neighbors => [2],
+      :items_per_page => 6,
+      :window_offset => 5,
+      :items => Post.find(1,2,3,4,5,6)
+    }
+    assert_page expected_page,Post.paginate!(:items_per_page => 6,:window_offset => 5)
+  end
+
+  def test_paginate_by_named_queries
+    expected_page = {
+      :number => 1, 
+      :next => 2,
+      :previous => 1,
+      :total_items => 6, 
+      :total_pages => 2,
+      :left_neighbors => [1],
+      :right_neighbors => [2],
+      :items_per_page => 3,
+      :window_offset => 1,
+      :items => Post.find(1,2,4)
+    }
+    assert_page expected_page, Post.paginate_by_active(:active => true)
+  end
+
+  def assert_page(expected_page,actual_page)
+    assert_equal expected_page[:total_items], actual_page.total_items 
+    assert_equal expected_page[:total_pages], actual_page.total_pages
+    assert_equal expected_page[:next], actual_page.next 
+    assert_equal expected_page[:previous], actual_page.previous 
+    assert_equal expected_page[:right_neighbors], actual_page.right_neighbors
+    assert_equal expected_page[:left_neighbors], actual_page.left_neighbors 
+    assert_equal expected_page[:items_per_page], actual_page.items_per_page
+    assert_equal expected_page[:window_offset], actual_page.window_offset
+    assert_equal expected_page[:number], actual_page.number
+    assert_equal expected_page[:items], actual_page.items
+  end
+ 
 end

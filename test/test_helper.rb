@@ -44,15 +44,14 @@ ActiveRecord::Schema.define(:version => 0) do
   create_table :authors do |t|
     t.string :name
   end
-  
+
   create_table :posts do |t|
     t.string :title
     t.string :text
+    t.boolean :active
     t.references :author
     t.references :blog
   end
 
-end
+ end
 
-class Test::Unit::TestCase
-end
