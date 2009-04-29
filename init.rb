@@ -1,1 +1,1 @@
-require "acts_as_pagiable"
+require "acts_as_pageable"
