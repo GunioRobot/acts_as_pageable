@@ -13,7 +13,7 @@ module ActsAsPageable
     MAX_ITEMS_PER_PAGE = 200
 
     DEFAULT_WINDOW_OFFSET = 1
-    MAX_WINDOW_OFFSET = 5
+    MAX_WINDOW_OFFSET =  20
 
     def number
       @number = fetch(:page,1)
@@ -76,7 +76,7 @@ module ActsAsPageable
 
     def max_window_offset
       @max_window_offset = fetch(:max_window_offset,MAX_WINDOW_OFFSET)
-      unless @max_window_offset.between?(1,MAX_WINDOW_OFFSET)
+      unless @max_window_offset.between?(self.min_window_offset,MAX_WINDOW_OFFSET)
         @max_window_offset = store(:max_window_offset,MAX_WINDOW_OFFSET)
       end
       store(:max_window_offset,@max_window_offset)

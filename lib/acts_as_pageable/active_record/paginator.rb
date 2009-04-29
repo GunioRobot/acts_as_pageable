@@ -3,7 +3,7 @@ module ActiveRecord
 
     module Paginator
 
-      include ::ActsAsPageable::NamedQueries
+      include ::ActsAsPageable::Paginator
 
       def paginate!(options={})
         pag = options.dup
@@ -19,7 +19,7 @@ module ActiveRecord
               hash = pag[:find].last
               hash[:offset] = offset
               hash[:limit] = limit
-              find pag[:find]
+              find *pag[:find]
             end
         end
         pag[:total_items] = case pag[:count].class.to_s
@@ -28,7 +28,7 @@ module ActiveRecord
           when "Proc"
             pag[:count]
           else
-            lambda{count pag[:count]}
+            lambda{count *pag[:count]}
         end
         pag.extend ::ActsAsPageable::Page
       end

@@ -4,9 +4,10 @@ class Post < ActiveRecord::Base
   belongs_to :blog
 
   self.paging_named_queries = {
-    :only_active => {
-      :find => [:all, {:conditions => [:active => true]}],
-      :count => {:conditions => [:active => true]}
+    :by_only_active => {
+      :items_per_page => 3,
+      :find =>  [:all, {:conditions => ["active = ?", true]}],
+      :count => [{:conditions => ["active = ?", true]}]
     },
     :by_active => {
       :items_per_page => 3,

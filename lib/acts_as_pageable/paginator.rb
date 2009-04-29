@@ -1,6 +1,6 @@
 module ActsAsPageable
 
-  module NamedQueries 
+  module Paginator
 
     attr_accessor :paging_named_queries
 
