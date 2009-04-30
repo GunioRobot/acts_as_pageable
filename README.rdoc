@@ -1,7 +1,106 @@
 = acts_as_pageable
 
-Description goes here.
+This plugin seems {will_paginte}[http://github.com/mislav/will_paginate], and indeed it inspired me,
+but this plugin has a considerable difference, you can tell it which find/count you want it use.
+It is very flexible and extremely useful.
+
+= Example Usage
+
+  Post.paginate!
+  Post.paginate! :page => 2
+  Post.paginate! :items_per_page => 5
+  Post.paginate! :page => 3, :items_per_page => 5
+
+  paginate_args = {
+    :page => 2,
+    :items_per_page => 5,
+    :find =>  [:all, {:conditions => ["active = ?", true]}],
+    :count => [{:conditions => ["active = ?", true]}]
+  }
+  Post.paginate! paginate_args
+
+  paginate_args = {
+    :page => 10
+    :find => lambda do |offset,limit,args| 
+      Post.find_by_sql(...)
+    end,
+    :count => lambda do |args| 
+      Post.count_by_sql(...)
+    end
+  }
+  p = Post.paginate! paginate_args
+  p.number             # 10
+  p.next               # 11
+  p.previous           # 9
+  p.left_neighbors     # [5 ,6 ,7 ,8 , 9]
+  p.right_neighbors    # [10,11,12,13,14]
+  p.total_items        # 100
+  p.total_pages        # 20
+  p.items_per_page     # 5
+  p.window_offset      # 5
+  p.max_items_per_page # 20
+  p.min_items_per_page # 1
+  p.min_window_offset  # 2
+  p.max_window_offset  # 8
+
+Parameters
+----------
+
+* :page - An integer determining the page number
+* :items_per_page - An integer determining the amount of items per page
+* :find - with two different retrieval approaches:
+  * Proc - with offset, limit and args parameters. 
+  * Hash - {find parameters}[http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M002208]
+* :count - like find
+* :window_offset - An integer determining the page number
+* :max_items_per_page - An integer determining the max amount of items per page. It's useful when it receve items_per_page parameter from request
+* :min_items_per_page 
+* :min_window_offset 
+* :max_window_offset 
+
+== Model
+
+  class Post < ActiveRecord::Base
+
+    belongs_to :author
+    belongs_to :blog
+
+    self.paging_named_queries = {
+      :only_active => {
+        :items_per_page => 3,
+        :find =>  [:all, {:conditions => ["active = ?", true]}],
+        :count => [{:conditions => ["active = ?", true]}]
+      },
+      :by_active => {
+        :find => lambda do |offset,limit,args| 
+          all(:conditions => ["active = ?",args[:active]],:offset => offset, :limit => limit)
+        end,
+        :count => lambda do |args| 
+          count(:conditions => ["active = ?",args[:active]])
+        end
+      }
+    }
+
+  end
+  
+  Post.paginate_only_active(:page => 1)
+  Post.paginate_by_active(:active => true)
+
+  class Author < ActiveRecord::Base
+    has_many :posts
+    has_many :blogs, :through => :posts, :uniq => true
+  end
+
+  a = Author.first
+  a.blogs.paginate! :page => 3
+
+== Instalation
+
+$ script/plugin install git://github.com/pahagon/acts_as_pageable.git
 
 == Copyright
 
 Copyright (c) 2009 Paulo Ahagon. See LICENSE for details.
+
+
+
