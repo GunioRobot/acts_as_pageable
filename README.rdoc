@@ -7,24 +7,25 @@ It is very flexible and extremely useful.
 = Example Usage
 
 ==Simple way
------------
+
   Post.paginate!
   Post.paginate! :page => 2
   Post.paginate! :items_per_page => 5
   Post.paginate! :page => 3, :items_per_page => 5
+  @author.blogs.paginate! :page => 3
 
-==More flex way
----------------
+==A Little Flexible
+
   paginate_args = {
     :page => 2,
     :items_per_page => 5,
     :find =>  [:all, {:conditions => ["active = ?", true]}],
     :count => [{:conditions => ["active = ?", true]}]
   }
-  Post.paginate! paginate_args
+  p = Post.paginate! paginate_args
 
-==Most flex way
----------------
+==The Most Flexible
+
   paginate_args = {
     :page => 10
     :find => lambda do |offset,limit,args| 
@@ -35,6 +36,9 @@ It is very flexible and extremely useful.
     end
   }
   p = Post.paginate! paginate_args
+
+After retrieved page
+
   p.number             # 10
   p.next               # 11
   p.previous           # 9
@@ -90,14 +94,6 @@ It is very flexible and extremely useful.
   
   Post.paginate_only_active(:page => 1)
   Post.paginate_by_active(:active => true)
-
-  class Author < ActiveRecord::Base
-    has_many :posts
-    has_many :blogs, :through => :posts, :uniq => true
-  end
-
-  a = Author.first
-  a.blogs.paginate! :page => 3
 
 == Instalation
 
