@@ -6,11 +6,15 @@ It is very flexible and extremely useful.
 
 = Example Usage
 
+==Simple way
+-----------
   Post.paginate!
   Post.paginate! :page => 2
   Post.paginate! :items_per_page => 5
   Post.paginate! :page => 3, :items_per_page => 5
 
+==More flex way
+---------------
   paginate_args = {
     :page => 2,
     :items_per_page => 5,
@@ -19,6 +23,8 @@ It is very flexible and extremely useful.
   }
   Post.paginate! paginate_args
 
+==Most flex way
+---------------
   paginate_args = {
     :page => 10
     :find => lambda do |offset,limit,args| 
@@ -43,8 +49,7 @@ It is very flexible and extremely useful.
   p.min_window_offset  # 2
   p.max_window_offset  # 8
 
-Parameters
-----------
+==Parameters
 
 * :page - An integer determining the page number
 * :items_per_page - An integer determining the amount of items per page
@@ -97,8 +102,6 @@ Parameters
 == Instalation
 
 $ script/plugin install git://github.com/pahagon/acts_as_pageable.git
-
-== Copyright
 
 Copyright (c) 2009 Paulo Ahagon. See LICENSE for details.
 
