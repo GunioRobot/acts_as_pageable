@@ -4,6 +4,12 @@ This plugin seems {will_paginte}[http://github.com/mislav/will_paginate], and in
 but this plugin has a considerable difference, you can tell it which find/count you want it use.
 It is very flexible and extremely useful.
 
+== Instalation
+
+$ script/plugin install git://github.com/pahagon/acts_as_pageable.git
+
+Copyright (c) 2009 Paulo Ahagon. See LICENSE for details.
+
 = Example Usage
 
 ==Simple way
@@ -27,7 +33,7 @@ It is very flexible and extremely useful.
 ==The Most Flexible
 
   paginate_args = {
-    :page => 10
+    :page => 10,
     :find => lambda do |offset,limit,args| 
       Post.find_by_sql(...)
     end,
@@ -67,7 +73,7 @@ After retrieved page
 * :min_window_offset 
 * :max_window_offset 
 
-== Model
+== Named Queries
 
   class Post < ActiveRecord::Base
 
@@ -95,11 +101,13 @@ After retrieved page
   Post.paginate_only_active(:page => 1)
   Post.paginate_by_active(:active => true)
 
-== Instalation
+== Array
 
-$ script/plugin install git://github.com/pahagon/acts_as_pageable.git
+  array = [1,2,3,4,5]
+  array.extend ActsAsPageable::Paginator
+  page = array.paginate!
+  
 
-Copyright (c) 2009 Paulo Ahagon. See LICENSE for details.
 
 
 
