@@ -3,14 +3,14 @@ module ActiveRecord
 
     module PaginatorCache
 
+      MAX_PAGES_CACHE = 20
+
       include ::ActiveRecord::ActsAsPageable::Paginator
       alias_method :paginate_without_cache, :paginate!
 
-      MAX_PAGES_CACHE = 20
-
       def paging_named_queries=(queries)
         @paging_named_queries = queries
-        @paging_named_queries.keys.each do | key |
+        @paging_named_queries.keys.each do |key|
           cache = @paging_named_queries[key][:cache]
           next unless cache && cache[:active]
           cache[:key] = cache[:key] ? cache[:key] + key : key
