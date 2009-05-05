@@ -6,7 +6,8 @@ module ActiveRecord
       include ::ActsAsPageable::Paginator
 
       def paginate!(options={})
-        pag = options.dup
+        default_options = @default_paginate_settings.nil? ? @@settings : @default_paginate_settings.merge(@@settings)
+        pag = default_options.merge options
         pag[:items] = case pag[:find].class.to_s
           when "NilClass"
             lambda do |offset,limit,opts|
