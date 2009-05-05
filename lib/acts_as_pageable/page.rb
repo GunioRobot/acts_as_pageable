@@ -2,18 +2,18 @@ module ActsAsPageable
 
   module Page
 
+    DEFAULT_ITEMS_PER_PAGE = 1
+    MAX_ITEMS_PER_PAGE = 200
+
+    DEFAULT_WINDOW_OFFSET = 1
+    MAX_WINDOW_OFFSET =  20
+
     attr_reader :total_items, :total_pages, :items
     attr_reader :next, :previous, :left_neighbors, :right_neighbors
    
     attr_accessor :items_per_page, :window_offset, :number
     attr_accessor :max_items_per_page, :min_items_per_page
     attr_accessor :min_window_offset, :max_window_offset
-
-    DEFAULT_ITEMS_PER_PAGE = 1
-    MAX_ITEMS_PER_PAGE = 200
-
-    DEFAULT_WINDOW_OFFSET = 1
-    MAX_WINDOW_OFFSET =  20
 
     def number
       @number = fetch(:page,1)
@@ -100,21 +100,22 @@ module ActsAsPageable
 
     def total_pages
       return @total_pages unless @total_pages.nil?
-      @total_pages = store :total_pages, (self.total_items.to_f / self.items_per_page.to_f).ceil 
+      @total_pages = store :total_pages, (self.total_items.to_f / self.items_per_page.to_f).ceil
+      store(:total_pages,@total_pages)
     end
     
     def next
       return @next unless @next.nil?
       @next = self.number + 1
       @next = self.total_pages if @next > self.total_pages
-      @next
+      store(:next,@next)
     end
 
     def previous
       return @previous unless @previous.nil?
       @previous = self.number - 1
       @previous = 1 if @previous < 1
-      @previous
+      store(:previous,@previous)
     end
 
     def left_neighbors
@@ -123,6 +124,7 @@ module ActsAsPageable
       range_start = 1 if range_start < 1 
       range_end = self.previous
       @left_neighbors = (range_start..range_end).to_a
+      store(:left_neighbors,@left_neighbors)
     end
 
     def right_neighbors
@@ -131,12 +133,14 @@ module ActsAsPageable
       range_end = self.number + self.window_offset
       range_end = self.total_pages if range_end > self.total_pages
       @right_neighbors = (range_start..range_end).to_a
+      store(:right_neighbors,@right_neighbors)
     end
 
     def total_items
       return @total_items unless @total_items.nil?
       total_items_proc = fetch(:total_items)
       @total_items = total_items_proc.call(self)
+      store(:total_item,@total_items)
     end
 
     def items
