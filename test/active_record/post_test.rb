@@ -1,6 +1,6 @@
-require File.join(File.dirname(__FILE__), 'test_helper')
+require File.join(File.dirname(__FILE__), 'active_record_test_helper')
 
-class ActsAsPageableTest < Test::Unit::TestCase
+class PostTest < Test::Unit::TestCase
 
   def setup 
     2.times do |author_number|
@@ -86,21 +86,21 @@ class ActsAsPageableTest < Test::Unit::TestCase
 
   def test_paginate_by_active
     expected_page = {
-      :number => 1, 
-      :next => 2,
+      :number => 0, 
+      :next => 0,
       :previous => 1,
       :total_items => 0, 
       :total_pages => 0,
       :left_neighbors => [1],
-      :right_neighbors => [2],
-      :items_per_page => 1,
+      :right_neighbors => [0],
+      :items_per_page => 3,
       :window_offset => 1,
       :items => []
     }
     assert_page expected_page, Post.paginate_by_active(:active => false)
   end
 
-  def test_paginate_by_active
+  def test_paginate_only_active
     expected_page = {
       :number => 1, 
       :next => 2,
@@ -116,17 +116,4 @@ class ActsAsPageableTest < Test::Unit::TestCase
     assert_page expected_page, Post.paginate_by_only_active
   end
 
-  def assert_page(expected_page,actual_page)
-    assert_equal expected_page[:total_items], actual_page.total_items 
-    assert_equal expected_page[:total_pages], actual_page.total_pages
-    assert_equal expected_page[:next], actual_page.next 
-    assert_equal expected_page[:previous], actual_page.previous 
-    assert_equal expected_page[:right_neighbors], actual_page.right_neighbors
-    assert_equal expected_page[:left_neighbors], actual_page.left_neighbors 
-    assert_equal expected_page[:items_per_page], actual_page.items_per_page
-    assert_equal expected_page[:window_offset], actual_page.window_offset
-    assert_equal expected_page[:number], actual_page.number
-    assert_equal expected_page[:items], actual_page.items
-  end
- 
 end

@@ -1,57 +1,25 @@
 require 'rubygems'
 require 'test/unit'
-require 'shoulda'
 
-TEST_ROOT       = File.expand_path(File.dirname(__FILE__))
-LIB_ROOT        = File.join(File.dirname(__FILE__), '..', 'lib')
-MODELS_ROOT     = File.join(TEST_ROOT,"models") 
+TEST_ROOT = File.expand_path(File.dirname(__FILE__))
+LIB_ROOT  = File.join(File.dirname(__FILE__), '..', 'lib')
 
 $LOAD_PATH.unshift(LIB_ROOT)
-$LOAD_PATH.unshift(MODELS_ROOT)
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
-require 'logger'
-require 'active_record'
+class Test::Unit::TestCase
 
-require File.join(LIB_ROOT, 'acts_as_pageable')
-require File.join(MODELS_ROOT,'author')
-require File.join(MODELS_ROOT,'blog')
-require File.join(MODELS_ROOT,'post')
-
-config = {
-  'pageable_unit' => {
-    :adapter  => 'sqlite3',
-    :username => 'rails',
-    :encoding => 'utf8',
-    :database => ':memory:',
-  }
-}
-
-ActiveRecord::Base.configurations = config['pageable_unit']
-ActiveRecord::Base.establish_connection config['pageable_unit']
-ActiveRecord::Base.logger = Logger.new(STDOUT)
-ActiveRecord::Base.logger.level = Logger::DEBUG
-
-ActiveRecord::Schema.define(:version => 0) do
-
-  create_table :blogs do |t|
-    t.integer :id, :null => false
-    t.string :title
+  def assert_page(expected_page,actual_page)
+    assert_equal expected_page[:total_items], actual_page.total_items 
+    assert_equal expected_page[:total_pages], actual_page.total_pages
+    assert_equal( expected_page[:next], actual_page.next )
+    assert_equal expected_page[:previous], actual_page.previous 
+    assert_equal expected_page[:right_neighbors], actual_page.right_neighbors
+    assert_equal expected_page[:left_neighbors], actual_page.left_neighbors 
+    assert_equal expected_page[:items_per_page], actual_page.items_per_page
+    assert_equal expected_page[:window_offset], actual_page.window_offset
+    assert_equal expected_page[:number], actual_page.number
+    assert_equal expected_page[:items], actual_page.items
   end
 
-  create_table :authors do |t|
-    t.integer :id, :null => false
-    t.string :name
-  end
-
-  create_table :posts do |t|
-    t.integer :id, :null => false
-    t.references :author, :null => false
-    t.references :blog, :null => false
-    t.boolean :active, :null => false, :default => true
-    t.string :title
-    t.string :text
-  end
-
- end
-
+end

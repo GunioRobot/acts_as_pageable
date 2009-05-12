@@ -58,20 +58,21 @@ After retrieved page
   p.min_items_per_page # 1
   p.min_window_offset  # 2
   p.max_window_offset  # 8
+  p.items              # array of objects
 
 ==Parameters
 
 * :page - An integer determining the page number
 * :items_per_page - An integer determining the amount of items per page
-* :find - with two different retrieval approaches:
-  * Proc - with offset, limit and args parameters. 
-  * Hash - {find parameters}[http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M002208]
-* :count - like find
+* :find - With two different retrieval approaches:
+  * Proc - With offset, limit and args parameters. 
+  * Hash - Same options used at {find parameters}[http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M002208]
+* :count - Like find
 * :window_offset - An integer determining the page number
-* :max_items_per_page - An integer determining the max amount of items per page. It's useful when it receve items_per_page parameter from request
-* :min_items_per_page 
-* :min_window_offset 
-* :max_window_offset 
+* :max_items_per_page - An integer determining the maximum amount of items per page. It's useful when it receve items_per_page parameter from request
+* :min_items_per_page - An integer determining the minimum of items per page.  
+* :min_window_offset - An integer determining the minimum of items in window.  
+* :max_window_offset - An integer determining the maximum of items in window.  
 
 == Named Queries
 
