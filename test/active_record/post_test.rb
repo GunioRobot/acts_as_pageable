@@ -33,7 +33,7 @@ class PostTest < Test::Unit::TestCase
       :window_offset => 1,
       :items => [Post.first]
     }
-    assert_page expected_page,Post.paginate!
+    should_be_equal expected_page,Post.paginate!
   end
 
   def test_second_page
@@ -49,7 +49,7 @@ class PostTest < Test::Unit::TestCase
       :window_offset => 3,
       :items => [Post.all[1]]
     }
-    assert_page expected_page,Post.paginate!(:page => 2,:window_offset => 3)
+    should_be_equal expected_page,Post.paginate!(:page => 2,:window_offset => 3)
   end
 
   def test_last_page
@@ -65,7 +65,7 @@ class PostTest < Test::Unit::TestCase
       :window_offset => 1,
       :items => Post.all[6..7]
     }
-    assert_page expected_page,Post.paginate!(:page => 3,:items_per_page => 3)
+    should_be_equal expected_page,Post.paginate!(:page => 3,:items_per_page => 3)
   end
 
   def test_items_per_page
@@ -81,7 +81,7 @@ class PostTest < Test::Unit::TestCase
       :window_offset => 5,
       :items => Post.all[0..5]
     }
-    assert_page expected_page,Post.paginate!(:items_per_page => 6,:window_offset => 5)
+    should_be_equal expected_page,Post.paginate!(:items_per_page => 6,:window_offset => 5)
   end
 
   def test_paginate_by_active
@@ -97,7 +97,7 @@ class PostTest < Test::Unit::TestCase
       :window_offset => 1,
       :items => []
     }
-    assert_page expected_page, Post.paginate_by_active(:active => false)
+    should_be_equal expected_page, Post.paginate_by_active(:active => false)
   end
 
   def test_paginate_only_active
@@ -113,7 +113,7 @@ class PostTest < Test::Unit::TestCase
       :window_offset => 1,
       :items => Post.all[0..2]
     }
-    assert_page expected_page, Post.paginate_by_only_active
+    should_be_equal expected_page, Post.paginate_by_only_active
   end
 
 end
