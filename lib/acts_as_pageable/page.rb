@@ -110,14 +110,14 @@ module ActsAsPageable
     def previous
       return @previous unless @previous.nil?
       @previous = self.number - 1
-      @previous = 1 if @previous < 1
+      (@previous = self.total_items > 0 ? 1 : 0) if @previous < 1
       store(:previous,@previous)
     end
 
     def left_neighbors
       return @left_neighbors unless @left_neighbors.nil?
       range_start = self.number - self.window_offset 
-      range_start = 1 if range_start < 1 
+      return [] if range_start < 1 
       range_end = self.previous
       @left_neighbors = (range_start..range_end).to_a
       store(:left_neighbors,@left_neighbors)
@@ -127,28 +127,36 @@ module ActsAsPageable
       return @right_neighbors unless @right_neighbors.nil?
       range_start = self.next
       range_end = self.number + self.window_offset
-      range_end = self.total_pages if range_end > self.total_pages
+      return [] if range_end > self.total_pages
       @right_neighbors = (range_start..range_end).to_a
       store(:right_neighbors,@right_neighbors)
     end
 
     def total_items
       return @total_items unless @total_items.nil?
-      total_items_proc = fetch(:total_items)
-      @total_items = total_items_proc.call(self)
+      total_items_value = fetch(:total_items) { raise ArgumentError.new("undefined total_items") }
+      if total_items_value.kind_of?(Proc)
+        @total_items = total_items_proc.call(self) 
+      elsif total_items_value.kind_of?(Fixnum)
+        @total_items = total_items_value
+      else
+        raise ArgumentError.new("unknow kind of total_items #{total_items_value}")
+      end
       store(:total_item,@total_items)
     end
 
     def items
-      if self.total_items < 1
-        @items = []
+      return [] if self.total_items < 1
+      items_value = fetch(:items){ raise ArgumentError.new("undefined items") }
+      offset = (self.number * self.items_per_page) - self.items_per_page 
+      limit = self.items_per_page
+      if items_value.kind_of?(Proc)
+        @items = items_value.call(offset,limit,self)
+      elsif items_value.kind_of?(Array)
+        @items = items_value[offset..limit] 
       else
-        offset = (self.number * self.items_per_page) - self.items_per_page 
-        limit = self.items_per_page
-        items_proc = fetch(:items)
-        @items = items_proc.call(offset,limit,self)
+        raise ArgumentError.new("unknow kind of items #{items_value}")
       end
-      @items
     end
 
     def each(&block)
