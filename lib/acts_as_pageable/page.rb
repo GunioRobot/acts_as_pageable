@@ -2,11 +2,7 @@ module ActsAsPageable
 
   module Page
 
-    DEFAULT_ITEMS_PER_PAGE = 1
-    MAX_ITEMS_PER_PAGE = 200
-
-    DEFAULT_WINDOW_OFFSET = 1
-    MAX_WINDOW_OFFSET =  20
+    include GlobalSettings
 
     attr_reader :total_items, :total_pages, :items
     attr_reader :next, :previous, :left_neighbors, :right_neighbors
@@ -27,9 +23,9 @@ module ActsAsPageable
     end
 
     def max_items_per_page
-      @max_items_per_page = fetch(:max_items_per_page,MAX_ITEMS_PER_PAGE)
-      unless @max_items_per_page.between?(self.min_items_per_page,MAX_ITEMS_PER_PAGE)
-        @max_items_per_page = store(:max_items_per_page,MAX_ITEMS_PER_PAGE)
+      @max_items_per_page = fetch(:max_items_per_page,@@settings[:max_items_per_page])
+      unless @max_items_per_page.between?(self.min_items_per_page,@@settings[:max_items_per_page])
+        @max_items_per_page = store(:max_items_per_page,@@settings[:max_items_per_page])
       end 
       store(:max_items_per_page,@max_items_per_page)
     end
@@ -39,9 +35,9 @@ module ActsAsPageable
     end
 
     def min_items_per_page
-      @min_items_per_page = fetch(:min_items_per_page,DEFAULT_ITEMS_PER_PAGE)
-      unless @min_items_per_page.between?(1,MAX_ITEMS_PER_PAGE)
-        @min_items_per_page = store(:min_items_per_page,DEFAULT_ITEMS_PER_PAGE)
+      @min_items_per_page = fetch(:min_items_per_page,@@settings[:min_items_per_page])
+      unless @min_items_per_page.between?(1,@@settings[:min_items_per_page])
+        @min_items_per_page = store(:min_items_per_page,@@settings[:min_items_per_page])
       end
       store(:mim_items_per_page,@min_items_per_page)
     end
@@ -63,9 +59,9 @@ module ActsAsPageable
     end
 
     def min_window_offset
-      @min_window_offset = fetch(:min_window_offset,DEFAULT_WINDOW_OFFSET)
-      unless @min_window_offset.between?(1,MAX_WINDOW_OFFSET)
-        @min_window_offset = store(:min_window_offset,DEFAULT_WINDOW_OFFSET)
+      @min_window_offset = fetch(:min_window_offset,@@settings[:min_window_offset])
+      unless @min_window_offset.between?(1,@@settings[:min_window_offset])
+        @min_window_offset = store(:min_window_offset,@@settings[:min_window_offset])
       end
       store(:min_window_offset,@min_window_offset)
     end
@@ -75,9 +71,9 @@ module ActsAsPageable
     end
 
     def max_window_offset
-      @max_window_offset = fetch(:max_window_offset,MAX_WINDOW_OFFSET)
-      unless @max_window_offset.between?(self.min_window_offset,MAX_WINDOW_OFFSET)
-        @max_window_offset = store(:max_window_offset,MAX_WINDOW_OFFSET)
+      @max_window_offset = fetch(:max_window_offset,@@settings[:max_window_offset])
+      unless @max_window_offset.between?(self.min_window_offset,@@settings[:max_window_offset])
+        @max_window_offset = store(:max_window_offset,@@settings[:max_window_offset])
       end
       store(:max_window_offset,@max_window_offset)
     end
