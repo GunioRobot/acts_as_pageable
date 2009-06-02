@@ -154,6 +154,10 @@ module ActsAsPageable
       end
       @items
     end
+
+    def each(&block)
+      self.items.each &block
+    end
     
   end
 
