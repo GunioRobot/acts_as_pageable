@@ -115,19 +115,21 @@ module ActsAsPageable
     end
 
     def left_neighbors
+      return [] if self.total_pages < 2 || self.number == 1
       return @left_neighbors unless @left_neighbors.nil?
       range_start = self.number - self.window_offset 
-      return [] if range_start < 1 
+      range_start = 1 if range_start < 1
       range_end = self.previous
       @left_neighbors = (range_start..range_end).to_a
       store(:left_neighbors,@left_neighbors)
     end
 
     def right_neighbors
+      return [] if self.total_pages < 2 || self.number == self.total_pages
       return @right_neighbors unless @right_neighbors.nil?
       range_start = self.next
       range_end = self.number + self.window_offset
-      return [] if range_end > self.total_pages
+      range_end =  self.total_pages if range_end > self.total_pages
       @right_neighbors = (range_start..range_end).to_a
       store(:right_neighbors,@right_neighbors)
     end
@@ -135,8 +137,8 @@ module ActsAsPageable
     def total_items
       return @total_items unless @total_items.nil?
       total_items_value = fetch(:total_items) { raise ArgumentError.new("undefined total_items") }
-      if total_items_value.kind_of?(Proc)
-        @total_items = total_items_proc.call(self) 
+      if total_items_value.respond_to?(:call)
+        @total_items = total_items_value.call(self) 
       elsif total_items_value.kind_of?(Fixnum)
         @total_items = total_items_value
       else
@@ -148,12 +150,14 @@ module ActsAsPageable
     def items
       return [] if self.total_items < 1
       items_value = fetch(:items){ raise ArgumentError.new("undefined items") }
-      offset = (self.number * self.items_per_page) - self.items_per_page 
-      limit = self.items_per_page
-      if items_value.kind_of?(Proc)
+      if items_value.respond_to?(:call)
+        offset = (self.number * self.items_per_page) - self.items_per_page 
+        limit = self.items_per_page
         @items = items_value.call(offset,limit,self)
-      elsif items_value.kind_of?(Array)
-        @items = items_value[offset..limit] 
+      elsif items_value.respond_to?(:[])
+        start_index = (self.number * self.items_per_page) - self.items_per_page 
+        end_index   = start_index + self.items_per_page - 1
+        @items = items_value[start_index..end_index] 
       else
         raise ArgumentError.new("unknow kind of items #{items_value}")
       end

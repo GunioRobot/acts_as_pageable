@@ -1,7 +1,8 @@
 require File.join(File.dirname(__FILE__), 'active_record_test_helper')
 
 class CategoryTest < Test::Unit::TestCase
-
+  extend ActsAsPageable::Test::Unit::TestCase
+  
   def setup 
     java_category = Category.create :name => "Java"
     ruby_category = Category.create :name => "Ruby"
@@ -35,7 +36,7 @@ class CategoryTest < Test::Unit::TestCase
       :right_neighbors => [2],
       :items_per_page => 1,
       :window_offset => 1,
-      :items => [Blog.all[0],Blog.all[2]]
+      :items         => [Blog.all[0],Blog.all[2]]
     }
     should_be_equal expected_page,java_category.blogs.paginate_by_author(:author => author)
   end

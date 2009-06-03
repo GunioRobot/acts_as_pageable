@@ -1,3 +1,7 @@
+require 'rubygems'
+require 'test/unit'
+require 'shoulda'
+
 ACTIVE_RECORD_TEST_ROOT = File.expand_path(File.dirname(__FILE__))
 MODELS_ROOT = File.join(ACTIVE_RECORD_TEST_ROOT,"models") 
 

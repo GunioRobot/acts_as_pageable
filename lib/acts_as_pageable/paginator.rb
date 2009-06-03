@@ -28,9 +28,7 @@ module ActsAsPageable
 
       pag[:items] = case pag[:find].class.to_s
       when "NilClass"
-        lambda do |offset,limit,opts|
-          entries[offset..limit]
-        end
+        self
       when "Proc"
         pag[:find]
       else
@@ -39,12 +37,10 @@ module ActsAsPageable
         end
       end
       pag[:total_items] = case pag[:count].class.to_s
-      when "NilClass"
-        lambda{size}
       when "Proc"
         pag[:count]
       else
-        lambda{size}
+        size
       end
       pag.extend Page
 
