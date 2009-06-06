@@ -4,7 +4,7 @@ module ActsAsPageable
 
     @@settings = {
       :page               => 1,
-      :items_per_page     => 10, 
+      :items_per_page     => 5, 
       :window_offset      => 5, 
       :max_items_per_page => 200, 
       :min_items_per_page => 5,
