@@ -90,7 +90,8 @@ class PageTest < Test::Unit::TestCase
           end
           context "and has 100 items" do
             setup do
-              @page = {:total_items => 100, :items => (1..100).to_a }
+              @items = (1..100).to_a 
+              @page = {:total_items => @items.size, :items => @items}
               @page.extend ActsAsPageable::Page
             end
             should_be_equal(
@@ -107,7 +108,7 @@ class PageTest < Test::Unit::TestCase
           end
         end#requesting first page
         context "requesting nonexistent page" do
-          context "and is empty" do
+          context "(page =>2), and is empty" do
             setup do
                @page = {:total_items => 0, :page => 2} 
                @page.extend ActsAsPageable::Page
@@ -124,9 +125,10 @@ class PageTest < Test::Unit::TestCase
               :window_offset   => 5,
               :items           => [])  
           end 
-          context "and has one item" do
+          context "(page => 0), and has one item" do
             setup do
-              @page = {:total_items => 1, :items => [:sym] ,:page => 0}
+              @items = [:sym]
+              @page = {:total_items => @items.size, :items => @items ,:page => 0}
               @page.extend ActsAsPageable::Page
             end
             should_be_equal(
@@ -141,9 +143,10 @@ class PageTest < Test::Unit::TestCase
               :window_offset   => 5,
               :items           => [:sym])
           end
-          context "and has 100 items" do
+          context "(page = -1), and has 100 items" do
             setup do
-              @page = {:total_items => 100, :items => (1..100).to_a, :page => -1}
+              @items = (1..100).to_a 
+              @page = {:total_items => @items.size, :items => @items, :page => -1}
               @page.extend ActsAsPageable::Page
             end
             should_be_equal(
@@ -162,7 +165,8 @@ class PageTest < Test::Unit::TestCase
         context "requesting second page" do
           context "and has 100 items" do
             setup do
-              @page = {:total_items => 100, :items => (1..100).to_a, :page => 2}
+              @items = (1..100).to_a 
+              @page = {:total_items => @items.size, :items => @items, :page => 2}
               @page.extend ActsAsPageable::Page
             end
             should_be_equal(
@@ -179,9 +183,10 @@ class PageTest < Test::Unit::TestCase
           end#and has 100 items
         end#requesting second page
         context "requesting middle page" do
-          context "and has 100 items" do
+          context "(page => 10) and has 100 items" do
             setup do
-              @page = {:total_items => 100, :items => (1..100).to_a, :page => 10}
+              @items = (1..100).to_a 
+              @page = {:total_items => @items.size, :items => @items, :page => 10}
               @page.extend ActsAsPageable::Page
             end
             should_be_equal(
@@ -198,9 +203,10 @@ class PageTest < Test::Unit::TestCase
           end#and has 100 items
         end#requesting middle page
         context "requesting last page" do
-          context "and has 100 items" do
+          context "(page = 20), and has 100 items" do
             setup do
-              @page = {:total_items => 100, :items => (1..100).to_a, :page => 20}
+              @items = (1..100).to_a 
+              @page = {:total_items => @items.size, :items => @items, :page => 20}
               @page.extend ActsAsPageable::Page
             end
             should_be_equal(
@@ -217,6 +223,11 @@ class PageTest < Test::Unit::TestCase
           end#and has 100 items
         end
       end#with default settings
+
+      context "without default settings" do
+        
+      end#without default settings
+
     end#does not use lambdas"
 
   end#A page instance when
