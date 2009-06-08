@@ -1,34 +1,44 @@
-= acts_as_pageable
+=acts_as_pageable
 
 This plugin seems {will_paginte}[http://github.com/mislav/will_paginate], and indeed it inspired me,
-but this plugin has a considerable difference, you can tell it which find/count you want it use.
-It is very flexible and extremely useful.
+but this plugin has a considerable difference, it's flexible and a general module for pagination.
+It's flexible because you can tell it which find/count you want it use.
+It's general because you can paginate array, active_record or any object who respond to 'size' and '[]' methods
 
-== Instalation
+==Instalation
 
+===Rails
 $ script/plugin install git://github.com/pahagon/acts_as_pageable.git
 
-Copyright (c) 2009 Paulo Ahagon. See LICENSE for details.
-
-= Example Usage
+=Example Usage
 
 ==Simple way
 
-  Post.paginate!
-  Post.paginate! :page => 2
-  Post.paginate! :items_per_page => 5
-  Post.paginate! :page => 3, :items_per_page => 5
-  @author.blogs.paginate! :page => 3
+===Array
+  array = [1,2,3,4,5]
+  array.extend ActsAsPageable::Paginator
+  page = array.paginate!    #using default parameters: page => 1, item_per_page => 10
+
+===ActiveRecord
+
+  page = Post.paginate!                                 #using default parameters: page => 1, item_per_page => 10
+  page = Post.paginate! :page => 2                      #overwriting default parameter 
+  page = Post.paginate! :items_per_page => 5
+  page = Post.paginate! :page => 3, :items_per_page => 5
+
+You can also paginate associations
+
+  page = @author.blogs.paginate! :page => 3
 
 ==A Little Flexible
 
   paginate_args = {
     :page => 2,
     :items_per_page => 5,
-    :find =>  [:all, {:conditions => ["active = ?", true]}],
-    :count => [{:conditions => ["active = ?", true]}]
+    :find =>  [:all, {:conditions => ["active = ?", true]}], #Same options used at {ActiveRecord}[http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M002208]
+    :count => [{:conditions => ["active = ?", true]}]        #Same options used at {ActiveRecord}[http://api.rubyonrails.org/classes/ActiveRecord/Calculations/ClassMethods.html#M002130]
   }
-  p = Post.paginate! paginate_args
+  page = Post.paginate! paginate_args
 
 ==The Most Flexible
 
@@ -41,38 +51,7 @@ Copyright (c) 2009 Paulo Ahagon. See LICENSE for details.
       Post.count_by_sql(...)
     end
   }
-  p = Post.paginate! paginate_args
-
-After retrieved page
-
-  p.number             # 10
-  p.next               # 11
-  p.previous           # 9
-  p.left_neighbors     # [5 ,6 ,7 ,8 , 9]
-  p.right_neighbors    # [10,11,12,13,14]
-  p.total_items        # 100
-  p.total_pages        # 20
-  p.items_per_page     # 5
-  p.window_offset      # 5
-  p.max_items_per_page # 20
-  p.min_items_per_page # 1
-  p.min_window_offset  # 2
-  p.max_window_offset  # 8
-  p.items              # array of objects
-
-==Parameters
-
-* :page - An integer determining the page number
-* :items_per_page - An integer determining the amount of items per page
-* :find - With two different retrieval approaches:
-  * Proc - With offset, limit and args parameters. 
-  * Hash - Same options used at {find parameters}[http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M002208]
-* :count - Like find
-* :window_offset - An integer determining the page number
-* :max_items_per_page - An integer determining the maximum amount of items per page. It's useful when it receve items_per_page parameter from request
-* :min_items_per_page - An integer determining the minimum of items per page.  
-* :min_window_offset - An integer determining the minimum of items in window.  
-* :max_window_offset - An integer determining the maximum of items in window.  
+  page = Post.paginate! paginate_args
 
 == Named Queries
 
@@ -99,16 +78,45 @@ After retrieved page
 
   end
   
-  Post.paginate_only_active(:page => 1)
-  Post.paginate_by_active(:active => true)
+  page = Post.paginate_only_active(:page => 1)
+  page = Post.paginate_by_active(:active => true)
 
-== Array
+==Parameters
 
-  array = [1,2,3,4,5]
-  array.extend ActsAsPageable::Paginator
-  page = array.paginate!
-  
+* :page - An integer determining the page number
+* :items_per_page - An integer determining the amount of items per page
+* :window_offset - An integer determining the page number
+* :max_items_per_page - An integer determining the maximum amount of items per page. It's useful when it receve items_per_page parameter from request
+* :min_items_per_page - An integer determining the minimum of items per page.  
+* :max_window_offset - An integer determining the maximum of items in window.  
+* :min_window_offset - An integer determining the minimum of items in window.  
+
+Just for ActiveRecord
+
+* :find - With two different retrieval approaches:
+  * Proc  - With offset, limit and args. 
+  * Array - Same options used at {ActiveRecord}[http://api.rubyonrails.org/classes/ActiveRecord/Base.html#M002208]
+* :count - Like :find parameter :count has similar retrieval approaches:
+  * Proc  - With args. 
+  * Array - Same options used at {ActiveRecord}[http://api.rubyonrails.org/classes/ActiveRecord/Calculations/ClassMethods.html#M002130]
+
+==After retrieved page
+
+  page.number             # 10
+  page.next               # 11
+  page.previous           # 9
+  page.left_neighbors     # [5 ,6 ,7 ,8 , 9]
+  page.right_neighbors    # [10,11,12,13,14]
+  page.total_items        # 100
+  page.total_pages        # 20
+  page.items_per_page     # 5
+  page.window_offset      # 5
+  page.max_items_per_page # 20
+  page.min_items_per_page # 1
+  page.min_window_offset  # 2
+  page.max_window_offset  # 8
+  page.items              # array of objects
 
 
-
+===Copyright (c) 2009 Paulo Ahagon. See LICENSE for details.
 
